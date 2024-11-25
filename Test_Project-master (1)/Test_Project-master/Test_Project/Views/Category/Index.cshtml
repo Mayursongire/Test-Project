@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Test_Project.Models.Category>
+
+@{
+    ViewBag.Title = "Category List";
+}
+
+<h2>Category List</h2>
+
+<p>
+    @Html.ActionLink("Create New Category", "Create", "Category", new {@class="btn btn-success"})
+</p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </th>
+        <th></th>
+    </tr>
+
+    
+
+@foreach (var item in Model) {
+    <tr id="cat_@item.CategoryId">
+        <td>
+            @Html.DisplayFor(modelItem => item.CategoryId)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.CategoryName)
+        </td>
+        <td >
+            
+            <span id="crud_@item.CategoryId">
+                @Html.ActionLink("Edit", "Edit", new { id = item.CategoryId }, new { @class = "btn btn-success" })
+                @Html.ActionLink("Details", "Details", new { id = item.CategoryId }, new { @class = "btn btn-secondary" })
+                @Html.ActionLink("Delete", "Delete", new { id = item.CategoryId }, new { @class = "btn btn-danger" })
+            </span>
+            
+        </td>
+    </tr>
+}
+
+</table>
+<script src="~/Scripts/categoryShowHide.js"></script>

@@ -1,0 +1,106 @@
+﻿@model IEnumerable<Test_Project.Models.ProductCategoryViewModel>
+
+
+@{
+    ViewBag.Title = "Product List";
+}
+
+<style>
+    .pro .crud_ {
+        visibility: hidden;
+    }
+
+    .pro:hover .crud {
+        visibility: visible;
+    }
+</style>
+
+<h2>Product List</h2>
+
+<p>
+    @Html.ActionLink("Add New Product", "Create","Product", new { @class = "btn btn-success " })
+</p>
+<table class="table table-striped">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ProductName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryId)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </th>
+        <th>
+            CRUD
+        </th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr class="pro_">
+            <td>
+                @Html.DisplayFor(modelIte => item.ProductId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelIem => item.CategoryId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                <span id="crud_" style="visibility: hidden;">
+                    @Html.ActionLink("Edit", "Edit", "Product", new { id = item.ProductId }, new { @class = "btn btn-success" })
+                    @Html.ActionLink("Details", "Details", "Product", new { id = item.ProductId }, new { @class = "btn btn-secondary" })
+                    @Html.ActionLink("Delete", "Delete", "Product", new { id = item.ProductId }, new { @class = "btn btn-danger" })
+                </span>
+            </td>
+        </tr>
+    }
+
+</table>
+@{
+    int totalPages = (int)Math.Ceiling((double)ViewBag.TotalCount / ViewBag.PageSize);
+}
+<nav>
+    <ul class="pagination">
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+            </li>
+
+        }
+    </ul>
+</nav>
+
+
+<script>
+    
+    document.addEventListener("DOMContentLoaded", function () {
+       
+        var rows = document.querySelectorAll('.pro_');
+
+        
+        rows.forEach(function (row) {
+            
+            var crudSpan = row.querySelector('#crud_');
+
+            
+            row.addEventListener('mouseover', function () {
+                crudSpan.style.visibility = 'visible'; // Show the span
+            });
+
+            
+            row.addEventListener('mouseout', function () {
+                crudSpan.style.visibility = 'hidden'; // Hide the span
+            });
+        });
+    });
+</script>
