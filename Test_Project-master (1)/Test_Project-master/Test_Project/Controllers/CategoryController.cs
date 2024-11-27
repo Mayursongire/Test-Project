@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -10,14 +10,24 @@ namespace Test_Project.Controllers
 {
     public class CategoryController : Controller
     {
-        ApplicationDbContext CategoryDb = new ApplicationDbContext()
-;        // GET: Category
-        public ActionResult Index()
+        ApplicationDbContext CategoryDb = new ApplicationDbContext();
+
+        // GET: Category
+        public ActionResult Index(int page = 1, int pageSize = 10)
         {
-            var data = CategoryDb.Category.ToList();
+            var data = CategoryDb.Category.Where(c => c.IsActive == true).ToList(); // Only active categories
+
+            ViewBag.TotalCount = data.Count();
+            ViewBag.PageSize = pageSize;
+            ViewBag.CurrentPage = page;
+
+            // Apply pagination
+            data = data.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
             return View(data);
         }
 
+        // GET: Category/Create
         public ActionResult Create()
         {
             return View();
@@ -28,51 +38,49 @@ namespace Test_Project.Controllers
         {
             if (ModelState.IsValid)
             {
+                category.IsActive = true;  // Default to active
                 CategoryDb.Category.Add(category);
                 CategoryDb.SaveChanges();
                 return RedirectToAction("Index");
             }
-            else
-            {
-                return View();
-            }
+            return View();
         }
+
+        // GET: Category/Edit
         public ActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction("Index");
             }
-            var category = CategoryDb.Category.Single(x => x.CategoryId == id);
 
+            var category = CategoryDb.Category.Single(x => x.CategoryId == id);
             return View(category);
         }
+
         [HttpPost]
         public ActionResult Edit(int id, Category model)
         {
             if (ModelState.IsValid)
             {
-                // Find the product to update
-                var category = CategoryDb.Category.FirstOrDefault(p => p.CategoryId == model.CategoryId );
+                var category = CategoryDb.Category.FirstOrDefault(p => p.CategoryId == model.CategoryId);
 
                 if (category == null)
                 {
                     return HttpNotFound();
                 }
 
-                // Update product details
                 category.CategoryName = model.CategoryName;
-                  // Update with the new selected category
+                category.IsActive = model.IsActive;  // Update IsActive field
 
-                // Save changes to the database
                 CategoryDb.SaveChanges();
-
                 return RedirectToAction("Index");
             }
-            // If model is invalid, return the view with categories populated again
-            return View("Index");
+
+            return View(model);
         }
 
+        // GET: Category/Details
         public ActionResult Details(int? id)
         {
             if (id == null)
@@ -83,20 +91,22 @@ namespace Test_Project.Controllers
             return View(data);
         }
 
+        // GET: Category/Delete
         public ActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return RedirectToAction("Index");
             }
-            var product = CategoryDb.Category.Single(x => x.CategoryId == id);
-            return View(product);
+
+            var category = CategoryDb.Category.Single(x => x.CategoryId == id);
+            return View(category);
         }
 
         [HttpPost]
         public ActionResult Delete(int id, Category category)
         {
-            Category data = CategoryDb.Category.Single(x => x.CategoryId == id);
+            var data = CategoryDb.Category.Single(x => x.CategoryId == id);
             CategoryDb.Category.Remove(data);
             CategoryDb.SaveChanges();
 
