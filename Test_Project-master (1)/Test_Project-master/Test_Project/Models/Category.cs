@@ -11,4 +11,6 @@ public class Category
 
     [Display(Name = "Is Active")]
     public bool IsActive { get; set; }  
+
+    public virtual ICollection<Product> Products { get; set; }
 }
