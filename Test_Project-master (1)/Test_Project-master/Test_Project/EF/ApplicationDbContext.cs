@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Web;
 using Test_Project.Models;
 
 namespace Test_Project.EF
@@ -14,9 +10,19 @@ namespace Test_Project.EF
 
         public ApplicationDbContext() : base("test")
         {
-
+        
         }
 
-        
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Enable Cascade Delete between Category and Product
+            modelBuilder.Entity<Product>()
+                .HasRequired(p => p.Category) 
+                .WithMany()                   
+                .HasForeignKey(p => p.ProductCategoryId) 
+                .WillCascadeOnDelete(true);   
+        }
     }
 }
